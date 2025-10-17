@@ -1,0 +1,14 @@
+# created by virtualenv automatically
+venv/
+.pylintrc
+__pycache__/
+
+.vscode
+.idea
+.env
+django.log
+security.log
+
+db.sqlte3
+media/
+debug.log
