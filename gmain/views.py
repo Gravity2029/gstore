@@ -20,18 +20,18 @@ class IndexView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if request.headers.get('HX-Request'):
-            return TemplateResponse(request, 'gmain/home_context.html', context)
+            return TemplateResponse(request, 'gmain/home_content.html', context)
         return TemplateResponse(request, self.template_name, context)
 
 
 class CatalogView(TemplateView):
-    template = 'main/base.html'
+    template = 'gmain/base.html'
 
     FILTER_MAPPING = {
         'color': lambda queryset, value: queryset.filter(color__iexact=value),
         'min_price': lambda queryset, value: queryset.filter(price__gte=value),
         'max_price': lambda queryset, value: queryset.filter(price__lte=value),
-        'size': lambda queryset, value: queryset.filter(product_size__size__name=value),
+        'size': lambda queryset, value: queryset.filter(product_sizes__size__name=value),
     }
 
     def get_context_data(self, **kwargs):
@@ -66,7 +66,7 @@ class CatalogView(TemplateView):
             'products': products,
             'current_category': category_slug,
             'filter_params': filter_params,
-            'sizes': Size.object.all(),
+            'sizes': Size.objects.all(),
             'search_query': query or ''
 
         })
@@ -81,7 +81,7 @@ class CatalogView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        if request.headers.get('HX-Rewuest'):
+        if request.headers.get('HX-Request'):
             if context.get('show_search'):
                 return TemplateResponse(request, 'gmain/search_input.html', context)
             elif context.get('reset_search'):
@@ -105,7 +105,7 @@ class ProductView(DetailView):
         context['related_products'] = Product.objects.filter(
             category=product.category
         ).exclude(id=product.id)[:4]
-        context['current_category'] = product.categort.slug
+        context['current_category'] = product.category.slug
         return context
     
 

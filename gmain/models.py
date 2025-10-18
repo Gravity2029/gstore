@@ -24,8 +24,8 @@ class Size(models.Model):
 
 class ProductSize(models.Model):
     product = models.ForeignKey('Product', on_delete=models.CASCADE,
-                                related_name='product_size')
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
+                                related_name='product_sizes')
+    size = models.ForeignKey('Size', on_delete=models.CASCADE)
     stock = models.PositiveIntegerField(default=0)
 
     def __str__(self):
@@ -39,8 +39,8 @@ class Product(models.Model):
     color = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True)
-    main_image = models.ImageField(upload_to='products/main/')
-    creted_at = models.DateTimeField(auto_now_add=True)
+    main_image = models.ImageField(upload_to='products/gmain/')
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
