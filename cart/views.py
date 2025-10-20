@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.db import transaction
 from gmain.models import Product, ProductSize
 from .models import Cart, CartItem
-from .forms import AddToCartForm, UpdateCartItemForm
+from .forms import AddToCartForm
 import json
 
 
@@ -26,6 +26,19 @@ class CartMixin:
         request.session.modified = True
         return cart
     
+
+class CartModalView(CartMixin, View):
+    def get(self,request):
+        cart = self.get_cart()
+
+        context = {
+            'cart': cart,
+            'cart_items': cart.items.select_related(
+                'product',
+                'product_size__size'
+            ).order_by('-added_at')
+        }
+        return TemplateResponse(request, 'cart/cart_modal.html', context)
 
 class AddToCartView(CartMixin, View):
     @transaction.atomic
@@ -116,7 +129,7 @@ class UpdateCartItemView(CartMixin, View):
             'cart': cart,
             'cart_items': cart.items.select_related(
                 'product',
-                'product_size_size'
+                'product_size__size'
             ).order_by('-added_at')
         }
         return TemplateResponse(request, 'cart/cart_modal.html', context)
@@ -137,7 +150,7 @@ class RemoveCartItemView(CartMixin, View):
                 'cart': cart,
                 'cart_items': cart.items.select_related(
                     'product',
-                    'product_size_size'
+                    'product_size__size'
                 ).order_by('-added_at')
             }
             return TemplateResponse(request, 'cart/cart_modal.html', context)
@@ -179,7 +192,7 @@ class CartSummaryView(CartMixin, View):
             'cart': cart,
             'cart_item': cart.items.select_reletd(
                 'product',
-                'product_size_size'
+                'product_size__size'
             ).order_by('-added_at')
         }
         return TemplateResponse(request, 'cart/cart_summary.html', context)
