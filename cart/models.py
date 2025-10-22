@@ -24,7 +24,7 @@ class Cart(models.Model):
         
 
     def add_prouct(self, product, product_size, quantity=1):
-        cart_item, created = CartItem.objets.get_or_create(
+        cart_item, created = CartItem.objects.get_or_create(
             cart = self,
             product = product,
             product_size=product_size,

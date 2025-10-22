@@ -28,8 +28,8 @@ class CartMixin:
     
 
 class CartModalView(CartMixin, View):
-    def get(self,request):
-        cart = self.get_cart()
+    def get(self, request):
+        cart = self.get_cart(request)
 
         context = {
             'cart': cart,
@@ -62,7 +62,7 @@ class AddToCartView(CartMixin, View):
                 product=product
             )
         else:
-            product_size = product.product_sizes.filter(stock__gt = 0).first()
+            product_size = product.product_sizes.filter(stock__gt=0).first()
             if not product_size:
                 return JsonResponse({
                     'error': 'No sizes available'
@@ -73,7 +73,7 @@ class AddToCartView(CartMixin, View):
                 'error': f"Only {product_size.stock} items available"
             }, status=400)
         
-        existing_item = cart.item.filter(
+        existing_item = cart.items.filter(
             product=product,
             product_size=product_size,
         ).first()
@@ -88,7 +88,7 @@ class AddToCartView(CartMixin, View):
         cart_item = cart.add_prouct(product, product_size, quantity)
 
         request.session['cart_id'] = cart.id
-        redirect.session.modified = True
+        request.session.modified = True
 
         if request.headers.get('HX-Request'):
             return redirect('cart:cart_modal')
@@ -123,7 +123,7 @@ class UpdateCartItemView(CartMixin, View):
             cart_item.save()
 
         request.session['cart_id'] = cart.id
-        redirect.session.modified = True
+        request.session.modified = True
 
         context = {
             'cart': cart,
@@ -144,7 +144,7 @@ class RemoveCartItemView(CartMixin, View):
             cart_item.delete()
 
             request.session['cart_id'] = cart.id
-            redirect.session.modified = True
+            request.session.modified = True
 
             context = {
                 'cart': cart,
@@ -173,7 +173,7 @@ class ClearCartView(CartMixin, View):
         cart.clear()
 
         request.session['cart_id'] = cart.id
-        redirect.session.modified = True        
+        request.session.modified = True        
 
         if request.headers.get('HX-Request'):
             return TemplateResponse(request, 'cart/cart_empty.html',{
