@@ -23,7 +23,7 @@ class Cart(models.Model):
         return sum(item.total_price for item in self.items.all())
         
 
-    def add_prouct(self, product, product_size, quantity=1):
+    def add_product(self, product, product_size, quantity=1):
         cart_item, created = CartItem.objects.get_or_create(
             cart = self,
             product = product,
@@ -47,7 +47,7 @@ class Cart(models.Model):
             return False
 
 
-    def update_item_quantiy(self, item_id, quantity):
+    def update_item_quantity(self, item_id, quantity):
         try:
             item = self.items.get(id=item_id)
             if quantity > 0:
