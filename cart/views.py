@@ -16,7 +16,7 @@ class CartMixin:
             return request.cart
 
         if not request.session.session_key:
-            request.session.creat()
+            request.session.create()
 
         cart, created  = Cart.objects.get_or_create(
             session_key = request.session.session_key
@@ -85,7 +85,7 @@ class AddToCartView(CartMixin, View):
                     'error': f"Cannof add {quantity} items. Only {product_size.stock - existing_item.quantity} more available."
                 }, status=400)
             
-        cart_item = cart.add_prouct(product, product_size, quantity)
+        cart_item = cart.add_product(product, product_size, quantity)
 
         request.session['cart_id'] = cart.id
         request.session.modified = True
